@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Outlet, NavLink } from 'react-router-dom';
 
-export const MainLayout: React.FC = () => {
+const MainLayout: React.FC = () => {
   return (
     <div className="app">
       <aside className="app-slider">
@@ -43,3 +43,5 @@ export const MainLayout: React.FC = () => {
     </div>
   );
 };
+
+export default MainLayout;

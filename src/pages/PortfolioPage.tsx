@@ -1,5 +1,7 @@
 import React from 'react';
 
-export const PortfolioPage: React.FC = () => {
+const PortfolioPage: React.FC = () => {
   return <div>PortfolioPage</div>;
 };
+
+export default PortfolioPage;

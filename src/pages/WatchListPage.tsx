@@ -1,5 +1,7 @@
 import React from 'react';
 
-export const WatchListPage: React.FC = () => {
+const WatchListPage: React.FC = () => {
   return <div>WatchListPage</div>;
 };
+
+export default WatchListPage;
