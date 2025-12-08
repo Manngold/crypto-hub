@@ -67,7 +67,7 @@ crypto-hub/
 
 ```bash
 # Repository Clone
-git clone <your-repository-url>
+git clone https://github.com/Manngold/crypto-hub.git
 
 # 프로젝트 폴더 이동
 cd crypto-hub
