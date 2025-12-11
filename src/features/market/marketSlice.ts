@@ -1,6 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../../app/store';
 import type { CoinMarket, SortField, SortDirection, Currency } from './marketTypes';
+import { fetchMarketCoins } from '../../services/coingeckoApi';
 
 type LoadStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
@@ -34,6 +36,29 @@ const initialState: MarketState = {
   currency: 'usd',
 };
 
+export const loadMarketCoins = createAsyncThunk<
+  CoinMarket[],
+  void,
+  { state: RootState; rejectValue: string }
+>('market/loadMarketCoins', async (_, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const { currency, page, perPage, sortField, sortDirection } = state.market;
+
+    const coins = await fetchMarketCoins({
+      vs_currency: currency,
+      page,
+      per_page: perPage,
+      sortField,
+      sortDirection,
+    });
+
+    return coins;
+  } catch (error) {
+    return rejectWithValue('마켓 데이터를 불러오는 중 문제가 발생했습니다.');
+  }
+});
+
 const marketSlice = createSlice({
   name: 'market',
   initialState,
@@ -61,6 +86,22 @@ const marketSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(loadMarketCoins.pending, state => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(loadMarketCoins.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.coins = action.payload;
+      })
+      .addCase(loadMarketCoins.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error =
+          action.payload ?? action.error.message ?? '마켓 데이터를 불러오지 못했습니다.';
+      });
   },
 });
 
